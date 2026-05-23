@@ -53,6 +53,14 @@ def test_compute_relative_speeds_with_baseline():
     assert faster_row.relative_speed == pytest.approx(2.0)
 
 
+def test_compute_relative_speeds_missing_baseline_raises():
+    """Ensure a KeyError or ValueError is raised when the baseline label is not found."""
+    report = ComparisonReport(baseline_label="nonexistent")
+    report.add("method_a", _make_result(100, 1.0))
+    with pytest.raises((KeyError, ValueError)):
+        report.compute_relative_speeds()
+
+
 def test_to_dict_structure():
     report = ComparisonReport()
     report.add("a", _make_result(50, 0.5))
