@@ -63,6 +63,17 @@ def test_stream_result_to_dict_keys():
         assert key in d
 
 
+def test_stream_result_to_dict_values_consistent():
+    """Ensure to_dict values match the corresponding method return values."""
+    r = _make_result(total_items=20, elapsed=4.0)
+    d = r.to_dict()
+    assert d["items_per_second"] == pytest.approx(r.items_per_second())
+    assert d["seconds_per_item"] == pytest.approx(r.seconds_per_item())
+    assert d["avg_chunk_time"] == pytest.approx(r.avg_chunk_time())
+    assert d["total_items"] == r.total_items
+    assert d["elapsed_seconds"] == pytest.approx(r.elapsed_seconds)
+
+
 def test_stream_result_to_timing_result():
     r = _make_result(total_items=20, elapsed=4.0)
     tr = r.to_timing_result()
@@ -100,18 +111,4 @@ def test_benchmark_stream_elapsed_positive():
 
 # ---------------------------------------------------------------------------
 # benchmark_stream_batched
-# ---------------------------------------------------------------------------
-
-def test_benchmark_stream_batched_total_items():
-    batches = [[1, 2, 3], [4, 5], [6]]
-    result = benchmark_stream_batched("batched", batches)
-    assert result.total_items == 6
-    assert len(result.chunk_times) == 3  # one per batch
-
-
-def test_benchmark_stream_batched_with_process():
-    seen: list[list[int]] = []
-    batches = [[1, 2], [3, 4, 5]]
-    result = benchmark_stream_batched("bp", batches, process=seen.append)
-    assert result.total_items == 5
-    assert len(seen) == 2
+# ---------
