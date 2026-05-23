@@ -71,3 +71,18 @@ class BenchmarkReporter:
             "total_elapsed_seconds": total_elapsed,
             "average_items_per_second": avg_ips,
         }
+
+    def print_summary(self) -> None:
+        """Print a concise summary of aggregated benchmark statistics."""
+        stats = self.summary()
+        if stats["count"] == 0:
+            print("No results to summarize.", file=self._output)
+            return
+
+        avg_ips = stats["average_items_per_second"]
+        avg_ips_str = f"{avg_ips:.2f}" if avg_ips is not None else "N/A"
+        print("Summary:", file=self._output)
+        print(f"  Runs:            {stats['count']}", file=self._output)
+        print(f"  Total items:     {stats['total_items']}", file=self._output)
+        print(f"  Total elapsed:   {stats['total_elapsed_seconds']:.4f}s", file=self._output)
+        print(f"  Avg throughput:  {avg_ips_str} items/s", file=self._output)
